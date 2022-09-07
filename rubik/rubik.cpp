@@ -6,6 +6,7 @@
 #define FACES 6
 #define CUBELENGTH 2
 #define CUBEWIDTH 2
+#define FACEAREA (CUBELENGTH * CUBEWIDTH)
 #define CUBESZ (CUBELENGTH * CUBEWIDTH * FACES)
 
 #define ATTACHMENTPOINT 1	//where the sides of the cube are attached on the 2d display
@@ -14,13 +15,15 @@ char cubeData[CUBESZ];
 
 HANDLE hCursor;
 
+const COORD promptLoc = { 0, 8 + 2 };
+
 void initCursor() {
 	hCursor = GetStdHandle(STD_OUTPUT_HANDLE);
 }
 
 void writeCharAt(const char* text, COORD coord) {
 	SetConsoleCursorPosition(hCursor, coord);
-	WriteConsole(hCursor, text, 1, 0, 0);
+	WriteConsoleA(hCursor, text, 1, 0, 0);
 }
 
 struct CubeFace {
@@ -42,13 +45,22 @@ struct Cube {
 Cube cube;
 
 void initCube() {
-	cubeData[0] = 'x';
+	for (int i = 0; i < 6 * 4; i++) {
+		cubeData[i] = 'x';
+	}
 	for (int i = 0; i < FACES; i++) {
 		cube.cubeFace[i].idx = i;
-		cube.cubeFace[i].tl = &cubeData[0];
-		cube.cubeFace[i].tr = &cubeData[0];
-		cube.cubeFace[i].bl = &cubeData[0];
-		cube.cubeFace[i].br = &cubeData[0];
+//		cube.cubeFace[i].tl = &cubeData[(i * FACEAREA) + 0];
+		cube.cubeFace[i].tl = cubeData + (i * FACEAREA) + 0;
+		cube.cubeFace[i].tr = &cubeData[(i * FACEAREA) + 1];
+		cube.cubeFace[i].bl = &cubeData[(i * FACEAREA) + 2];
+		cube.cubeFace[i].br = &cubeData[(i * FACEAREA) + 3];
+
+		char ch[2];
+		sprintf_s(ch, "%d", i);
+		for (int j = 0; j < 4; j++) {
+			cubeData[(i * FACEAREA) + j] = ch[0];
+		}
 	}
 	int basepos = 0;
 	for (int i = 0; i < FACES; i++) {
@@ -104,10 +116,42 @@ void displayCube() {
 	}
 }
 
+void displayFaceHelper(int face) {
+	char ch[2];
+	sprintf_s(ch, "%d", face);
+	writeCharAt(ch, cube.cubeFace[face].tlpos);
+	writeCharAt(ch, cube.cubeFace[face].trpos);
+	writeCharAt(ch, cube.cubeFace[face].blpos);
+	writeCharAt(ch, cube.cubeFace[face].brpos);
+}
+
+void displayHelperCube() {
+	for (int face = 0; face < FACES; face++) {
+		displayFaceHelper(face);
+	}
+}
+
+void resetCursorLoc() {
+	SetConsoleCursorPosition(hCursor, promptLoc);
+}
+
+void gameLoop() {
+	char ch;
+	do {
+		displayCube();
+		//displayHelperCube();
+		resetCursorLoc();
+		ch = getchar();
+		switch (ch) {
+		case 'h':
+			break;
+		}
+	} while (ch != 'q');
+}
+
 void main()
 {
 	initCursor();
 	initCube();
-	displayCube();
-	getchar();
+	gameLoop();
 }
