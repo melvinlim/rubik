@@ -39,15 +39,15 @@ struct Adjacent {
 
 struct CubeFace {
 	int idx;
-	char* tl;
-	char* tr;
-	char* bl;
-	char* br;
+	char* upL;
+	char* upR;
+	char* downL;
+	char* downR;
 	struct Adjacent adjacent;
-	COORD tlpos;
-	COORD trpos;
-	COORD blpos;
-	COORD brpos;
+	COORD upLpos;
+	COORD upRpos;
+	COORD downLpos;
+	COORD downRpos;
 };
 
 struct Cube {
@@ -62,10 +62,10 @@ void initCube() {
 	}
 	for (int i = 0; i < FACES; i++) {
 		cube.cubeFace[i].idx = i;
-		cube.cubeFace[i].tl = cubeData + (i * FACEAREA) + 0;
-		cube.cubeFace[i].tr = cubeData + (i * FACEAREA) + 1;
-		cube.cubeFace[i].bl = cubeData + (i * FACEAREA) + 2;
-		cube.cubeFace[i].br = cubeData + (i * FACEAREA) + 3;
+		cube.cubeFace[i].upL = cubeData + (i * FACEAREA) + 0;
+		cube.cubeFace[i].upR = cubeData + (i * FACEAREA) + 1;
+		cube.cubeFace[i].downL = cubeData + (i * FACEAREA) + 2;
+		cube.cubeFace[i].downR = cubeData + (i * FACEAREA) + 3;
 
 		char ch[2];
 		sprintf_s(ch, "%d", i);
@@ -74,62 +74,78 @@ void initCube() {
 		}
 	}
 
-	cube.cubeFace[0].adjacent.upL = cube.cubeFace[3].bl;
-	cube.cubeFace[0].adjacent.upR = cube.cubeFace[3].br;
-	cube.cubeFace[0].adjacent.downL = cube.cubeFace[1].tl;
-	cube.cubeFace[0].adjacent.downR = cube.cubeFace[1].tr;
-	cube.cubeFace[0].adjacent.leftU = cube.cubeFace[4].tl;
-	cube.cubeFace[0].adjacent.leftD = cube.cubeFace[4].tr;
-	cube.cubeFace[0].adjacent.rightU = cube.cubeFace[5].tr;
-	cube.cubeFace[0].adjacent.rightD = cube.cubeFace[5].tl;
-	cube.cubeFace[1].adjacent.upL = cube.cubeFace[0].bl;
-	cube.cubeFace[1].adjacent.upR = cube.cubeFace[0].br;
-	cube.cubeFace[1].adjacent.downL = cube.cubeFace[2].tl;
-	cube.cubeFace[1].adjacent.downR = cube.cubeFace[2].tr;
-	cube.cubeFace[1].adjacent.leftU = cube.cubeFace[4].tr;
-	cube.cubeFace[1].adjacent.leftD = cube.cubeFace[4].br;
-	cube.cubeFace[1].adjacent.rightU = cube.cubeFace[5].tl;
-	cube.cubeFace[1].adjacent.rightD = cube.cubeFace[5].bl;
-	cube.cubeFace[2].adjacent.upL = cube.cubeFace[1].bl;
-	cube.cubeFace[2].adjacent.upR = cube.cubeFace[1].br;
-	cube.cubeFace[2].adjacent.downL = cube.cubeFace[3].tl;
-	cube.cubeFace[2].adjacent.downR = cube.cubeFace[3].tr;
-	cube.cubeFace[2].adjacent.leftU = cube.cubeFace[4].br;
-	cube.cubeFace[2].adjacent.leftD = cube.cubeFace[4].bl;
-	cube.cubeFace[2].adjacent.rightU = cube.cubeFace[5].bl;
-	cube.cubeFace[2].adjacent.rightD = cube.cubeFace[5].br;
+	cube.cubeFace[0].adjacent.upL = cube.cubeFace[3].downL;
+	cube.cubeFace[0].adjacent.upR = cube.cubeFace[3].downR;
+	cube.cubeFace[0].adjacent.downL = cube.cubeFace[1].upL;
+	cube.cubeFace[0].adjacent.downR = cube.cubeFace[1].upR;
+	cube.cubeFace[0].adjacent.leftU = cube.cubeFace[4].upL;
+	cube.cubeFace[0].adjacent.leftD = cube.cubeFace[4].upR;
+	cube.cubeFace[0].adjacent.rightU = cube.cubeFace[5].upR;
+	cube.cubeFace[0].adjacent.rightD = cube.cubeFace[5].upL;
+	cube.cubeFace[1].adjacent.upL = cube.cubeFace[0].downL;
+	cube.cubeFace[1].adjacent.upR = cube.cubeFace[0].downR;
+	cube.cubeFace[1].adjacent.downL = cube.cubeFace[2].upL;
+	cube.cubeFace[1].adjacent.downR = cube.cubeFace[2].upR;
+	cube.cubeFace[1].adjacent.leftU = cube.cubeFace[4].upR;
+	cube.cubeFace[1].adjacent.leftD = cube.cubeFace[4].downR;
+	cube.cubeFace[1].adjacent.rightU = cube.cubeFace[5].upL;
+	cube.cubeFace[1].adjacent.rightD = cube.cubeFace[5].downL;
+	cube.cubeFace[2].adjacent.upL = cube.cubeFace[1].downL;
+	cube.cubeFace[2].adjacent.upR = cube.cubeFace[1].downR;
+	cube.cubeFace[2].adjacent.downL = cube.cubeFace[3].upL;
+	cube.cubeFace[2].adjacent.downR = cube.cubeFace[3].upR;
+	cube.cubeFace[2].adjacent.leftU = cube.cubeFace[4].downR;
+	cube.cubeFace[2].adjacent.leftD = cube.cubeFace[4].downL;
+	cube.cubeFace[2].adjacent.rightU = cube.cubeFace[5].downL;
+	cube.cubeFace[2].adjacent.rightD = cube.cubeFace[5].downR;
+	cube.cubeFace[3].adjacent.upL = cube.cubeFace[2].downL;
+	cube.cubeFace[3].adjacent.upR = cube.cubeFace[2].downR;
+	cube.cubeFace[3].adjacent.downL = cube.cubeFace[0].upL;
+	cube.cubeFace[3].adjacent.downR = cube.cubeFace[0].upR;
+	cube.cubeFace[3].adjacent.leftU = cube.cubeFace[4].downL;
+	cube.cubeFace[3].adjacent.leftD = cube.cubeFace[4].upL;
+	cube.cubeFace[3].adjacent.rightU = cube.cubeFace[5].downR;
+	cube.cubeFace[3].adjacent.rightD = cube.cubeFace[5].upR;
+	cube.cubeFace[4].adjacent.upL = cube.cubeFace[0].upL;
+	cube.cubeFace[4].adjacent.upR = cube.cubeFace[0].downL;
+	cube.cubeFace[4].adjacent.downL = cube.cubeFace[2].downL;
+	cube.cubeFace[4].adjacent.downR = cube.cubeFace[2].upL;
+	cube.cubeFace[4].adjacent.leftU = cube.cubeFace[5].upR;
+	cube.cubeFace[4].adjacent.leftD = cube.cubeFace[5].downR;
+	cube.cubeFace[4].adjacent.rightU = cube.cubeFace[1].upL;
+	cube.cubeFace[4].adjacent.rightD = cube.cubeFace[1].downL;
 
 	int basepos = 0;
 	for (int i = 0; i < FACES; i++) {
 		if (i < 4) {
-			cube.cubeFace[i].tlpos.X = 2;
-			cube.cubeFace[i].trpos.X = 3;
-			cube.cubeFace[i].blpos.X = 2;
-			cube.cubeFace[i].brpos.X = 3;
-			cube.cubeFace[i].tlpos.Y = (i * 2);
-			cube.cubeFace[i].trpos.Y = (i * 2);
-			cube.cubeFace[i].blpos.Y = (i * 2) + 1;
-			cube.cubeFace[i].brpos.Y = (i * 2) + 1;
+			cube.cubeFace[i].upLpos.X = 2;
+			cube.cubeFace[i].upRpos.X = 3;
+			cube.cubeFace[i].downLpos.X = 2;
+			cube.cubeFace[i].downRpos.X = 3;
+			cube.cubeFace[i].upLpos.Y = (i * 2);
+			cube.cubeFace[i].upRpos.Y = (i * 2);
+			cube.cubeFace[i].downLpos.Y = (i * 2) + 1;
+			cube.cubeFace[i].downRpos.Y = (i * 2) + 1;
 		}
 		if (i == 4) {
-			cube.cubeFace[i].tlpos.X = 0;
-			cube.cubeFace[i].trpos.X = 1;
-			cube.cubeFace[i].blpos.X = 0;
-			cube.cubeFace[i].brpos.X = 1;
-			cube.cubeFace[i].tlpos.Y = (ATTACHMENTPOINT * 2);
-			cube.cubeFace[i].trpos.Y = (ATTACHMENTPOINT * 2);
-			cube.cubeFace[i].blpos.Y = (ATTACHMENTPOINT * 2) + 1;
-			cube.cubeFace[i].brpos.Y = (ATTACHMENTPOINT * 2) + 1;
+			cube.cubeFace[i].upLpos.X = 0;
+			cube.cubeFace[i].upRpos.X = 1;
+			cube.cubeFace[i].downLpos.X = 0;
+			cube.cubeFace[i].downRpos.X = 1;
+			cube.cubeFace[i].upLpos.Y = (ATTACHMENTPOINT * 2);
+			cube.cubeFace[i].upRpos.Y = (ATTACHMENTPOINT * 2);
+			cube.cubeFace[i].downLpos.Y = (ATTACHMENTPOINT * 2) + 1;
+			cube.cubeFace[i].downRpos.Y = (ATTACHMENTPOINT * 2) + 1;
 		}
 		if (i == 5) {
-			cube.cubeFace[i].tlpos.X = 4;
-			cube.cubeFace[i].trpos.X = 5;
-			cube.cubeFace[i].blpos.X = 4;
-			cube.cubeFace[i].brpos.X = 5;
-			cube.cubeFace[i].tlpos.Y = (ATTACHMENTPOINT * 2);
-			cube.cubeFace[i].trpos.Y = (ATTACHMENTPOINT * 2);
-			cube.cubeFace[i].blpos.Y = (ATTACHMENTPOINT * 2) + 1;
-			cube.cubeFace[i].brpos.Y = (ATTACHMENTPOINT * 2) + 1;
+			cube.cubeFace[i].upLpos.X = 4;
+			cube.cubeFace[i].upRpos.X = 5;
+			cube.cubeFace[i].downLpos.X = 4;
+			cube.cubeFace[i].downRpos.X = 5;
+			cube.cubeFace[i].upLpos.Y = (ATTACHMENTPOINT * 2);
+			cube.cubeFace[i].upRpos.Y = (ATTACHMENTPOINT * 2);
+			cube.cubeFace[i].downLpos.Y = (ATTACHMENTPOINT * 2) + 1;
+			cube.cubeFace[i].downRpos.Y = (ATTACHMENTPOINT * 2) + 1;
 		}
 	}
 }
@@ -141,10 +157,10 @@ const char* getCellValue(int x) {
 }
 
 void displayFace(int face) {
-	writeCharAt(cube.cubeFace[face].tl, cube.cubeFace[face].tlpos);
-	writeCharAt(cube.cubeFace[face].tr, cube.cubeFace[face].trpos);
-	writeCharAt(cube.cubeFace[face].bl, cube.cubeFace[face].blpos);
-	writeCharAt(cube.cubeFace[face].br, cube.cubeFace[face].brpos);
+	writeCharAt(cube.cubeFace[face].upL, cube.cubeFace[face].upLpos);
+	writeCharAt(cube.cubeFace[face].upR, cube.cubeFace[face].upRpos);
+	writeCharAt(cube.cubeFace[face].downL, cube.cubeFace[face].downLpos);
+	writeCharAt(cube.cubeFace[face].downR, cube.cubeFace[face].downRpos);
 }
 
 void displayCube() {
@@ -156,10 +172,10 @@ void displayCube() {
 void displayFaceHelper(int face) {
 	char ch[2];
 	sprintf_s(ch, "%d", face);
-	writeCharAt(ch, cube.cubeFace[face].tlpos);
-	writeCharAt(ch, cube.cubeFace[face].trpos);
-	writeCharAt(ch, cube.cubeFace[face].blpos);
-	writeCharAt(ch, cube.cubeFace[face].brpos);
+	writeCharAt(ch, cube.cubeFace[face].upLpos);
+	writeCharAt(ch, cube.cubeFace[face].upRpos);
+	writeCharAt(ch, cube.cubeFace[face].downLpos);
+	writeCharAt(ch, cube.cubeFace[face].downRpos);
 }
 
 void displayHelperCube() {
@@ -180,7 +196,7 @@ enum class State : int {
 
 void rotate(int face, State state) {
 	char tmp, tmp1, tmp2;
-	tmp = *cube.cubeFace[face].tl;
+	tmp = *cube.cubeFace[face].upL;
 	tmp1 = *cube.cubeFace[face].adjacent.upL;
 	tmp2 = *cube.cubeFace[face].adjacent.upR;
 	if (state == State::right) {
@@ -193,10 +209,10 @@ void rotate(int face, State state) {
 		*cube.cubeFace[face].adjacent.rightD = tmp2;
 		*cube.cubeFace[face].adjacent.rightU = tmp1;
 
-		*cube.cubeFace[face].tl = *cube.cubeFace[face].bl;
-		*cube.cubeFace[face].bl = *cube.cubeFace[face].br;
-		*cube.cubeFace[face].br = *cube.cubeFace[face].tr;
-		*cube.cubeFace[face].tr = tmp;
+		*cube.cubeFace[face].upL = *cube.cubeFace[face].downL;
+		*cube.cubeFace[face].downL = *cube.cubeFace[face].downR;
+		*cube.cubeFace[face].downR = *cube.cubeFace[face].upR;
+		*cube.cubeFace[face].upR = tmp;
 	}
 	else if (state == State::left) {
 		*cube.cubeFace[face].adjacent.upL = *cube.cubeFace[face].adjacent.rightU;
@@ -208,10 +224,10 @@ void rotate(int face, State state) {
 		*cube.cubeFace[face].adjacent.leftD = tmp1;
 		*cube.cubeFace[face].adjacent.leftU = tmp2;
 
-		*cube.cubeFace[face].tl = *cube.cubeFace[face].tr;
-		*cube.cubeFace[face].tr = *cube.cubeFace[face].br;
-		*cube.cubeFace[face].br = *cube.cubeFace[face].bl;
-		*cube.cubeFace[face].bl = tmp;
+		*cube.cubeFace[face].upL = *cube.cubeFace[face].upR;
+		*cube.cubeFace[face].upR = *cube.cubeFace[face].downR;
+		*cube.cubeFace[face].downR = *cube.cubeFace[face].downL;
+		*cube.cubeFace[face].downL = tmp;
 	}
 }
 
