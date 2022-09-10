@@ -214,6 +214,7 @@ void clrscr() {
 }
 
 void gameLoop() {
+	int face = 0;
 	State state = State::none;
 	char ch;
 	char statusline[256] = { 0 };
@@ -224,13 +225,19 @@ void gameLoop() {
 		printf("%s\r\n", statusline);
 		ch = getchar();
 		switch (ch) {
+		case '0':
 		case '1':
-			if (state == State::right) {			
-				strcpy_s(statusline, "rotating face 1 right\r\n");
+		case '2':
+		case '3':
+		case '4':
+		case '5':
+			face = ch - '0';
+			if (state == State::right) {
+				sprintf_s(statusline, "rotating face %d right\r\n", face);
 			} else if (state == State::left) {
-				strcpy_s(statusline, "rotating face 1 left\r\n");
+				sprintf_s(statusline, "rotating face %d left\r\n", face);
 			}
-			rotate(1, state);
+			rotate(face, state);
 			break;
 		case 'l':
 			state = State::left;
