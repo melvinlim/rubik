@@ -90,6 +90,14 @@ void initCube() {
 	cube.cubeFace[1].adjacent.leftD = cube.cubeFace[4].br;
 	cube.cubeFace[1].adjacent.rightU = cube.cubeFace[5].tl;
 	cube.cubeFace[1].adjacent.rightD = cube.cubeFace[5].bl;
+	cube.cubeFace[2].adjacent.upL = cube.cubeFace[1].bl;
+	cube.cubeFace[2].adjacent.upR = cube.cubeFace[1].br;
+	cube.cubeFace[2].adjacent.downL = cube.cubeFace[3].tl;
+	cube.cubeFace[2].adjacent.downR = cube.cubeFace[3].tr;
+	cube.cubeFace[2].adjacent.leftU = cube.cubeFace[4].br;
+	cube.cubeFace[2].adjacent.leftD = cube.cubeFace[4].bl;
+	cube.cubeFace[2].adjacent.rightU = cube.cubeFace[5].bl;
+	cube.cubeFace[2].adjacent.rightD = cube.cubeFace[5].br;
 
 	int basepos = 0;
 	for (int i = 0; i < FACES; i++) {
@@ -182,8 +190,8 @@ void rotate(int face, State state) {
 		*cube.cubeFace[face].adjacent.leftU = *cube.cubeFace[face].adjacent.downL;
 		*cube.cubeFace[face].adjacent.downL = *cube.cubeFace[face].adjacent.rightD;
 		*cube.cubeFace[face].adjacent.downR = *cube.cubeFace[face].adjacent.rightU;
-		*cube.cubeFace[face].adjacent.rightD = tmp1;
-		*cube.cubeFace[face].adjacent.rightU = tmp2;
+		*cube.cubeFace[face].adjacent.rightD = tmp2;
+		*cube.cubeFace[face].adjacent.rightU = tmp1;
 
 		*cube.cubeFace[face].tl = *cube.cubeFace[face].bl;
 		*cube.cubeFace[face].bl = *cube.cubeFace[face].br;
