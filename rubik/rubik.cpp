@@ -171,17 +171,40 @@ enum class State : int {
 };
 
 void rotate(int face, State state) {
-	char tmp1, tmp2;
+	char tmp, tmp1, tmp2;
+	tmp = *cube.cubeFace[face].tl;
 	tmp1 = *cube.cubeFace[face].adjacent.upL;
 	tmp2 = *cube.cubeFace[face].adjacent.upR;
-	*cube.cubeFace[face].adjacent.upL = *cube.cubeFace[face].adjacent.leftD;
-	*cube.cubeFace[face].adjacent.upR = *cube.cubeFace[face].adjacent.leftU;
-	*cube.cubeFace[face].adjacent.leftD = *cube.cubeFace[face].adjacent.downR;
-	*cube.cubeFace[face].adjacent.leftU = *cube.cubeFace[face].adjacent.downL;
-	*cube.cubeFace[face].adjacent.downL = *cube.cubeFace[face].adjacent.rightD;
-	*cube.cubeFace[face].adjacent.downR = *cube.cubeFace[face].adjacent.rightU;
-	*cube.cubeFace[face].adjacent.rightD = tmp1;
-	*cube.cubeFace[face].adjacent.rightU = tmp2;
+	if (state == State::right) {
+		*cube.cubeFace[face].adjacent.upL = *cube.cubeFace[face].adjacent.leftD;
+		*cube.cubeFace[face].adjacent.upR = *cube.cubeFace[face].adjacent.leftU;
+		*cube.cubeFace[face].adjacent.leftD = *cube.cubeFace[face].adjacent.downR;
+		*cube.cubeFace[face].adjacent.leftU = *cube.cubeFace[face].adjacent.downL;
+		*cube.cubeFace[face].adjacent.downL = *cube.cubeFace[face].adjacent.rightD;
+		*cube.cubeFace[face].adjacent.downR = *cube.cubeFace[face].adjacent.rightU;
+		*cube.cubeFace[face].adjacent.rightD = tmp1;
+		*cube.cubeFace[face].adjacent.rightU = tmp2;
+
+		*cube.cubeFace[face].tl = *cube.cubeFace[face].bl;
+		*cube.cubeFace[face].bl = *cube.cubeFace[face].br;
+		*cube.cubeFace[face].br = *cube.cubeFace[face].tr;
+		*cube.cubeFace[face].tr = tmp;
+	}
+	else if (state == State::left) {
+		*cube.cubeFace[face].adjacent.upL = *cube.cubeFace[face].adjacent.rightU;
+		*cube.cubeFace[face].adjacent.upR = *cube.cubeFace[face].adjacent.rightD;
+		*cube.cubeFace[face].adjacent.rightD = *cube.cubeFace[face].adjacent.downL;
+		*cube.cubeFace[face].adjacent.rightU = *cube.cubeFace[face].adjacent.downR;
+		*cube.cubeFace[face].adjacent.downL = *cube.cubeFace[face].adjacent.leftU;
+		*cube.cubeFace[face].adjacent.downR = *cube.cubeFace[face].adjacent.leftD;
+		*cube.cubeFace[face].adjacent.leftD = tmp1;
+		*cube.cubeFace[face].adjacent.leftU = tmp2;
+
+		*cube.cubeFace[face].tl = *cube.cubeFace[face].tr;
+		*cube.cubeFace[face].tr = *cube.cubeFace[face].br;
+		*cube.cubeFace[face].br = *cube.cubeFace[face].bl;
+		*cube.cubeFace[face].bl = tmp;
+	}
 }
 
 #define WINDOWS 1
