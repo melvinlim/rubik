@@ -110,10 +110,18 @@ void initCube() {
 	cube.cubeFace[4].adjacent.upR = cube.cubeFace[0].downL;
 	cube.cubeFace[4].adjacent.downL = cube.cubeFace[2].downL;
 	cube.cubeFace[4].adjacent.downR = cube.cubeFace[2].upL;
-	cube.cubeFace[4].adjacent.leftU = cube.cubeFace[5].upR;
-	cube.cubeFace[4].adjacent.leftD = cube.cubeFace[5].downR;
+	cube.cubeFace[4].adjacent.leftU = cube.cubeFace[3].downL;
+	cube.cubeFace[4].adjacent.leftD = cube.cubeFace[3].upL;
 	cube.cubeFace[4].adjacent.rightU = cube.cubeFace[1].upL;
 	cube.cubeFace[4].adjacent.rightD = cube.cubeFace[1].downL;
+	cube.cubeFace[5].adjacent.upL = cube.cubeFace[0].downR;
+	cube.cubeFace[5].adjacent.upR = cube.cubeFace[0].upR;
+	cube.cubeFace[5].adjacent.downL = cube.cubeFace[2].upR;
+	cube.cubeFace[5].adjacent.downR = cube.cubeFace[2].downR;
+	cube.cubeFace[5].adjacent.leftU = cube.cubeFace[1].upR;
+	cube.cubeFace[5].adjacent.leftD = cube.cubeFace[1].downR;
+	cube.cubeFace[5].adjacent.rightU = cube.cubeFace[3].downR;
+	cube.cubeFace[5].adjacent.rightD = cube.cubeFace[3].upR;
 
 	int basepos = 0;
 	for (int i = 0; i < FACES; i++) {
