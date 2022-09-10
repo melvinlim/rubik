@@ -26,12 +26,24 @@ void writeCharAt(const char* text, COORD coord) {
 	WriteConsoleA(hCursor, text, 1, 0, 0);
 }
 
+struct Adjacent {
+	char* upL;
+	char* downL;
+	char* leftU;
+	char* rightU;
+	char* upR;
+	char* downR;
+	char* leftD;
+	char* rightD;
+};
+
 struct CubeFace {
 	int idx;
 	char* tl;
 	char* tr;
 	char* bl;
 	char* br;
+	struct Adjacent adjacent;
 	COORD tlpos;
 	COORD trpos;
 	COORD blpos;
@@ -50,11 +62,10 @@ void initCube() {
 	}
 	for (int i = 0; i < FACES; i++) {
 		cube.cubeFace[i].idx = i;
-//		cube.cubeFace[i].tl = &cubeData[(i * FACEAREA) + 0];
 		cube.cubeFace[i].tl = cubeData + (i * FACEAREA) + 0;
-		cube.cubeFace[i].tr = &cubeData[(i * FACEAREA) + 1];
-		cube.cubeFace[i].bl = &cubeData[(i * FACEAREA) + 2];
-		cube.cubeFace[i].br = &cubeData[(i * FACEAREA) + 3];
+		cube.cubeFace[i].tr = cubeData + (i * FACEAREA) + 1;
+		cube.cubeFace[i].bl = cubeData + (i * FACEAREA) + 2;
+		cube.cubeFace[i].br = cubeData + (i * FACEAREA) + 3;
 
 		char ch[2];
 		sprintf_s(ch, "%d", i);
@@ -62,6 +73,24 @@ void initCube() {
 			cubeData[(i * FACEAREA) + j] = ch[0];
 		}
 	}
+
+	cube.cubeFace[0].adjacent.upL = cube.cubeFace[3].bl;
+	cube.cubeFace[0].adjacent.upR = cube.cubeFace[3].br;
+	cube.cubeFace[0].adjacent.downL = cube.cubeFace[1].tl;
+	cube.cubeFace[0].adjacent.downR = cube.cubeFace[1].tr;
+	cube.cubeFace[0].adjacent.leftU = cube.cubeFace[4].tl;
+	cube.cubeFace[0].adjacent.leftD = cube.cubeFace[4].tr;
+	cube.cubeFace[0].adjacent.rightU = cube.cubeFace[5].tr;
+	cube.cubeFace[0].adjacent.rightD = cube.cubeFace[5].tl;
+	cube.cubeFace[1].adjacent.upL = cube.cubeFace[0].bl;
+	cube.cubeFace[1].adjacent.upR = cube.cubeFace[0].br;
+	cube.cubeFace[1].adjacent.downL = cube.cubeFace[2].tl;
+	cube.cubeFace[1].adjacent.downR = cube.cubeFace[2].tr;
+	cube.cubeFace[1].adjacent.leftU = cube.cubeFace[4].tr;
+	cube.cubeFace[1].adjacent.leftD = cube.cubeFace[4].br;
+	cube.cubeFace[1].adjacent.rightU = cube.cubeFace[5].tl;
+	cube.cubeFace[1].adjacent.rightD = cube.cubeFace[5].bl;
+
 	int basepos = 0;
 	for (int i = 0; i < FACES; i++) {
 		if (i < 4) {
@@ -135,17 +164,65 @@ void resetCursorLoc() {
 	SetConsoleCursorPosition(hCursor, promptLoc);
 }
 
+enum class State : int {
+	none,
+	left,
+	right
+};
+
+void rotate(int face, State state) {
+	char tmp1, tmp2;
+	tmp1 = *cube.cubeFace[face].adjacent.upL;
+	tmp2 = *cube.cubeFace[face].adjacent.upR;
+	*cube.cubeFace[face].adjacent.upL = *cube.cubeFace[face].adjacent.leftD;
+	*cube.cubeFace[face].adjacent.upR = *cube.cubeFace[face].adjacent.leftU;
+	*cube.cubeFace[face].adjacent.leftD = *cube.cubeFace[face].adjacent.downR;
+	*cube.cubeFace[face].adjacent.leftU = *cube.cubeFace[face].adjacent.downL;
+	*cube.cubeFace[face].adjacent.downL = *cube.cubeFace[face].adjacent.rightD;
+	*cube.cubeFace[face].adjacent.downR = *cube.cubeFace[face].adjacent.rightU;
+	*cube.cubeFace[face].adjacent.rightD = tmp1;
+	*cube.cubeFace[face].adjacent.rightU = tmp2;
+}
+
+#define WINDOWS 1
+
+void clrscr() {
+	system("cls");
+}
+
 void gameLoop() {
+	State state = State::none;
 	char ch;
+	char statusline[256] = { 0 };
 	do {
 		displayCube();
 		//displayHelperCube();
 		resetCursorLoc();
+		printf("%s\r\n", statusline);
 		ch = getchar();
 		switch (ch) {
-		case 'h':
+		case '1':
+			if (state == State::right) {			
+				strcpy_s(statusline, "rotating face 1 right\r\n");
+			} else if (state == State::left) {
+				strcpy_s(statusline, "rotating face 1 left\r\n");
+			}
+			rotate(1, state);
+			break;
+		case 'l':
+			state = State::left;
+			strcpy_s(statusline, "rotating left\r\n");
+			break;
+		case 'r':
+			state = State::right;
+			strcpy_s(statusline, "rotating right\r\n");
+			break;
+		case 'R':
+			initCube();
+			strcpy_s(statusline, "reset cube\r\n");
 			break;
 		}
+		clrscr();
 	} while (ch != 'q');
 }
 
