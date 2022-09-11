@@ -2,6 +2,8 @@
 
 #include <stdio.h>
 #include <Windows.h>
+#include <cstdlib>
+#include <ctime>
 
 #define FACES 6
 #define CUBELENGTH 2
@@ -245,6 +247,24 @@ void clrscr() {
 	system("cls");
 }
 
+void shuffle(int n) {
+	State state;
+	int tmp;
+	for (int i = 0; i < n; i++) {
+		tmp = (rand() % 2);
+		switch (tmp) {
+		case 0:
+			state = State::left;
+			break;
+		case 1:
+			state = State::right;
+			break;
+		}
+		tmp = (rand() % 6);
+		rotate(tmp, state);
+	}
+}
+
 void gameLoop() {
 	int face = 0;
 	State state = State::none;
@@ -266,7 +286,8 @@ void gameLoop() {
 			face = ch - '0';
 			if (state == State::right) {
 				sprintf_s(statusline, "rotating face %d right\r\n", face);
-			} else if (state == State::left) {
+			}
+			else if (state == State::left) {
 				sprintf_s(statusline, "rotating face %d left\r\n", face);
 			}
 			rotate(face, state);
@@ -283,13 +304,19 @@ void gameLoop() {
 			initCube();
 			strcpy_s(statusline, "reset cube\r\n");
 			break;
+		case 's':
+			shuffle(1);
+			strcpy_s(statusline, "shuffling cube\r\n");
+			break;
 		}
+
 		clrscr();
 	} while (ch != 'q');
 }
 
 void main()
 {
+	srand(time(0));
 	initCursor();
 	initCube();
 	gameLoop();
